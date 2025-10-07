@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 
+axios.defaults.baseURL = 'http://localhost:5000';
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

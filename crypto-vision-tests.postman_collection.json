@@ -1,0 +1,573 @@
+{
+  "info": {
+    "name": "Crypto-Vision Trading API Tests",
+    "description": "Comprehensive test collection for Crypto-Vision trading platform with real-time Binance integration",
+    "version": "2.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔓 Public Endpoints",
+      "item": [
+        {
+          "name": "Server Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Binance API Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/binance",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", "binance"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Cryptocurrencies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/cryptocurrencies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "cryptocurrencies"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get BTC Price",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/price/BTC",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "price", "BTC"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get ETH Price",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/price/ETH",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "price", "ETH"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Market Overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/market/overview",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "market", "overview"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Unsupported Crypto (Should Fail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/price/DOGE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "price", "DOGE"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Register Test User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (responseCode.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.collectionVariables.set('jwtToken', response.data.token);",
+                  "        console.log('JWT token saved:', response.data.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@cryptovision.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Test User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (responseCode.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.collectionVariables.set('jwtToken', response.data.token);",
+                  "        console.log('JWT token saved:', response.data.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@cryptovision.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💰 Trading Operations",
+      "item": [
+        {
+          "name": "Get User Portfolio (Empty)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/balances",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "balances"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buy 0.001 BTC",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cryptoSymbol\": \"BTC\",\n  \"amount\": \"0.001\",\n  \"ethValue\": \"43.25\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/buy",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "buy"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buy 0.01 ETH",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cryptoSymbol\": \"ETH\",\n  \"amount\": \"0.01\",\n  \"ethValue\": \"26.50\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/buy",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "buy"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buy 100 ADA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cryptoSymbol\": \"ADA\",\n  \"amount\": \"100\",\n  \"ethValue\": \"38.50\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/buy",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "buy"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sell 0.0005 BTC",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cryptoSymbol\": \"BTC\",\n  \"amount\": \"0.0005\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/sell",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "sell"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Updated Portfolio",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/balances",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "balances"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📊 Portfolio & History",
+      "item": [
+        {
+          "name": "Get Transaction History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "transactions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/transaction/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "transaction", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "❌ Error Testing",
+      "item": [
+        {
+          "name": "Unauthorized Access (No Token)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/balances",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "balances"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid_token_here"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/balances",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "balances"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buy Unsupported Crypto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cryptoSymbol\": \"DOGE\",\n  \"amount\": \"100\",\n  \"ethValue\": \"50\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/buy",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "buy"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sell More Than Holdings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cryptoSymbol\": \"BTC\",\n  \"amount\": \"10\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/sell",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "sell"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buy with Negative Amount",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cryptoSymbol\": \"BTC\",\n  \"amount\": \"-0.001\",\n  \"ethValue\": \"43.25\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/buy",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "buy"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buy without Required Fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cryptoSymbol\": \"BTC\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/buy",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "buy"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🚀 Performance Testing",
+      "item": [
+        {
+          "name": "Rapid Price Requests (BTC)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/price/BTC",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "price", "BTC"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rapid Portfolio Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/balances",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "balances"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Market Overview Performance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/trading/market/overview",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "trading", "market", "overview"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
